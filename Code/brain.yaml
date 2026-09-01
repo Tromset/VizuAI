@@ -1,0 +1,12 @@
+# brain.yaml — folder variables (brAIn rule 6)
+name: Code
+purpose: "Application source code and implementation"
+parent: ../brain.yaml
+children: []
+files:
+  getting-started.md: "Scaffold, run, and develop the application"
+when_to_read:
+  "How do I run the app?": getting-started.md
+  "Where do I add new code?": getting-started.md
+  "What is the project structure?": getting-started.md
+links: {}

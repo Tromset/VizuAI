@@ -1,0 +1,14 @@
+# brain.yaml — folder variables (brAIn rule 6)
+name: Agents
+purpose: "Project context, objectives, and decisions for agents"
+parent: ../brain.yaml
+children: []
+files:
+  project.md: "What VizuAI is and what it is not"
+  objectives.md: "Goals, success criteria, and current priorities"
+when_to_read:
+  "What is VizuAI?": project.md
+  "What problem does it solve?": project.md
+  "What are the goals?": objectives.md
+  "What should I prioritize?": objectives.md
+links: {}
