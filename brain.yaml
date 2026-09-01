@@ -12,4 +12,6 @@ when_to_read:
   "What is this project?": Agents/project.md
   "What are we building?": Agents/objectives.md
   "Where is the source code?": Code/README.md
-links: {}
+  "How do I map my brAIn folder?": Code/getting-started.md
+links:
+  "brAIn Mapper app": Code/getting-started.md

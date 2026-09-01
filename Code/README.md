@@ -8,9 +8,23 @@ Implementation lives here. Agents should read [Agents/project.md](../Agents/proj
 
 | File | What it contains |
 |---|---|
-| [getting-started.md](getting-started.md) | How to scaffold and run the app |
+| [getting-started.md](getting-started.md) | Install, run, and use brAIn Mapper |
 | [brain.yaml](brain.yaml) | Routing table for this folder |
+| [package.json](package.json) | Electron app — `npm start` |
 
 ## Subfolders
 
-*(none — add `src/`, `tests/`, etc. as the project grows; each gets its own hub and brain.yaml)*
+| Path | Purpose |
+|---|---|
+| `src-fsharp/` | Fable 5.1 — link extraction, brain.yaml parsing, graph builder |
+| `electron/` | Electron main process and preload |
+| `public/` | Renderer UI (Gemini-inspired design) |
+| `dist/` | Compiled mapper bundle (generated) |
+
+## Quick start
+
+```bash
+cd Code
+npm install
+npm start
+```

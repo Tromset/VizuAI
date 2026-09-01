@@ -1,12 +1,21 @@
 # brain.yaml — folder variables (brAIn rule 6)
 name: Code
-purpose: "Application source code and implementation"
+purpose: "brAIn Mapper — Electron app for folder mapping and auto-linking"
 parent: ../brain.yaml
-children: []
+children:
+  - src-fsharp/
+  - electron/
+  - public/
 files:
-  getting-started.md: "Scaffold, run, and develop the application"
+  getting-started.md: "Install, run, and use brAIn Mapper"
+  package.json: "npm start launches the Electron app"
+  README.md: "Hub for this folder"
 when_to_read:
   "How do I run the app?": getting-started.md
-  "Where do I add new code?": getting-started.md
-  "What is the project structure?": getting-started.md
-links: {}
+  "Where is the F# source?": src-fsharp/
+  "Where is the Electron shell?": electron/
+  "Where is the UI?": public/
+links:
+  "Fable sources": src-fsharp/MapApp.fsproj
+  "Main process": electron/main.js
+  "UI entry": public/index.html
