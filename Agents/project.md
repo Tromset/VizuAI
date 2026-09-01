@@ -2,7 +2,7 @@
 
 > 🧠 [Hub](README.md) · [Variables](brain.yaml) · [Objectives](objectives.md)
 
-VizuAI is an AI-assisted data visualization project. It helps users turn raw data into clear, interactive charts and dashboards with minimal manual configuration. The first shipping surface is **brAIn Mapper**, an Electron app that maps brAIn folders.
+VizuAI is an AI-assisted data visualization project. It helps users turn raw data into clear, interactive charts and dashboards with minimal manual configuration. The first shipping surface is **brAIn Mapper**, an Electron (and local web) app that maps brAIn folders and edits vault files in place.
 
 ## Audience layout
 

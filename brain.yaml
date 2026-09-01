@@ -5,6 +5,7 @@ parent: null
 children:
   - Agents/
   - Code/
+  - design-system/
 files:
   README.md: "Root hub — user-facing navigation and audience map"
   getting-started.md: "Install, run, and use brAIn Mapper"

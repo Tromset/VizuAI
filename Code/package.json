@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --enable-logging",
-    "test": "node test/mapper.test.js"
+    "web": "node server.js",
+    "test": "node test/mapper.test.js && node test/vault.test.js"
   },
   "keywords": ["brain", "electron", "agentic", "markdown"],
   "author": "Tromset",

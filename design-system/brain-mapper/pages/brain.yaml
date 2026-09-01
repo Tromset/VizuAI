@@ -1,0 +1,11 @@
+# brain.yaml — folder variables (brAIn rule 6)
+name: pages
+purpose: "Page-level design overrides"
+parent: ../brain.yaml
+children: []
+files:
+  README.md: "Hub"
+  workspace.md: "Obsidian-like workspace rules"
+when_to_read:
+  "Editor and sidebar rules?": workspace.md
+links: {}

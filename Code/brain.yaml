@@ -1,6 +1,6 @@
 # brain.yaml — folder variables (brAIn rule 6)
 name: Code
-purpose: "brAIn Mapper — Electron app for folder mapping and auto-linking"
+purpose: "brAIn Mapper — vault editor, graph, and brain.yaml auto-linking"
 parent: ../brain.yaml
 children:
   - src/
@@ -8,16 +8,20 @@ children:
   - public/
   - test/
 files:
-  package.json: "npm start launches the Electron app"
+  package.json: "npm start (Electron) and npm run web (browser)"
   README.md: "Hub for machine-addressed files in this folder"
+  server.js: "HTTP server for the vault UI in a browser"
 when_to_read:
   "How do I run the app?": ../getting-started.md
   "Where is the mapping logic?": src/mapper.js
+  "Where is the vault / file editor?": src/vault.js
   "Where is the Electron shell?": electron/
+  "Where is the browser server?": server.js
   "Where is the UI?": public/
   "How do I run the tests?": test/mapper.test.js
 links:
   "User getting started": ../getting-started.md
   "Mapping logic": src/mapper.js
+  "Vault I/O": src/vault.js
   "Main process": electron/main.js
   "UI entry": public/index.html
