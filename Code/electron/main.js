@@ -7,23 +7,28 @@ let mainWindow = null;
 
 const SKIP_DIRS = new Set(['.git', 'node_modules', '.cursor', 'dist', 'bin', 'obj']);
 
-/** Collecte récursivement les fichiers .md et brain.yaml d'un dossier. */
-function scanFolder(rootPath, currentPath, files = []) {
+/**
+ * Collecte récursivement les documents (.md, brain.yaml) avec leur contenu,
+ * ainsi que les chemins de tous les fichiers (pour la résolution des liens).
+ */
+function scanFolder(rootPath, currentPath, result = { docs: [], allPaths: [] }) {
   const entries = fs.readdirSync(currentPath, { withFileTypes: true });
 
   for (const entry of entries) {
     if (entry.isDirectory()) {
       if (SKIP_DIRS.has(entry.name)) continue;
-      scanFolder(rootPath, path.join(currentPath, entry.name), files);
+      scanFolder(rootPath, path.join(currentPath, entry.name), result);
     } else if (entry.isFile()) {
       const fullPath = path.join(currentPath, entry.name);
       const relPath = path.relative(rootPath, fullPath).replace(/\\/g, '/');
-      if (mapper.classifyFile(relPath) === 'other') continue;
-      files.push([relPath, fs.readFileSync(fullPath, 'utf-8')]);
+      result.allPaths.push(relPath);
+      if (mapper.classifyFile(relPath) !== 'other') {
+        result.docs.push([relPath, fs.readFileSync(fullPath, 'utf-8')]);
+      }
     }
   }
 
-  return files;
+  return result;
 }
 
 function createWindow() {
@@ -75,8 +80,8 @@ ipcMain.handle('select-folder', async () => {
 });
 
 ipcMain.handle('map-folder', async (_event, folderPath) => {
-  const files = scanFolder(folderPath, folderPath);
-  return mapper.mapFolder(folderPath, files);
+  const { docs, allPaths } = scanFolder(folderPath, folderPath);
+  return mapper.mapFolder(folderPath, docs, allPaths);
 });
 
 ipcMain.handle('apply-updates', async (_event, { rootPath, updates }) => {

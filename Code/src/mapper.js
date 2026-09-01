@@ -60,12 +60,23 @@ function normalizeTarget(sourcePath, rawTarget) {
 
 /**
  * Extrait les liens `[texte](cible)` et wikilinks `[[page]]` d'un
- * fichier Markdown, avec numéro de ligne.
+ * fichier Markdown, avec numéro de ligne. Les blocs de code (```)
+ * et le code inline (`…`) sont ignorés : ce sont des exemples,
+ * pas des liens de navigation.
  */
 function extractFromMarkdown(sourcePath, content) {
   const links = [];
+  let inFence = false;
 
-  content.split('\n').forEach((line, i) => {
+  content.split('\n').forEach((rawLine, i) => {
+    if (/^\s*(```|~~~)/.test(rawLine)) {
+      inFence = !inFence;
+      return;
+    }
+    if (inFence) return;
+
+    const line = rawLine.replace(/`[^`]*`/g, '`code`');
+
     for (const m of line.matchAll(MD_LINK_RE)) {
       const rawTarget = m[2].trim();
       if (isExternal(rawTarget)) continue;
@@ -94,9 +105,14 @@ function targetVariants(target) {
   return variants;
 }
 
-/** Marque chaque lien comme résolu (fichier trouvé) ou cassé. */
-function resolveLinks(files, links) {
-  const fileSet = new Set(files.map((f) => f.relativePath));
+/**
+ * Marque chaque lien comme résolu (fichier trouvé) ou cassé.
+ * `paths` : chemins relatifs de tous les fichiers existants — pas
+ * seulement les documents, pour ne pas signaler à tort comme cassés
+ * les liens vers package.json, images, etc.
+ */
+function resolveLinks(paths, links) {
+  const fileSet = paths instanceof Set ? paths : new Set(paths);
 
   return links.map((link) => {
     const found = targetVariants(link.target).find((c) => fileSet.has(c));
@@ -219,6 +235,9 @@ function buildGraph(files, links, brainNodes) {
 
   for (const link of links) {
     if (!link.resolved || link.source === link.target) continue;
+    // Un lien peut être résolu vers un fichier non documentaire
+    // (package.json, image…) qui n'a pas de nœud dans le graphe.
+    if (!fileSet.has(link.target)) continue;
     const key = `${link.source}→${link.target}`;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -264,9 +283,11 @@ function findOrphans(files, links) {
 
 /**
  * Cartographie un dossier à partir de la liste `[cheminRelatif, contenu]`
- * de ses fichiers. Retourne l'objet consommé par le renderer.
+ * de ses documents (.md / brain.yaml). `allFilePaths` liste en option les
+ * chemins de tous les autres fichiers du dossier, utilisés uniquement pour
+ * la résolution des liens. Retourne l'objet consommé par le renderer.
  */
-function mapFolder(rootPath, entries) {
+function mapFolder(rootPath, entries, allFilePaths = []) {
   const files = entries
     .map(([relativePath, content]) => ({
       relativePath,
@@ -279,7 +300,11 @@ function mapFolder(rootPath, entries) {
     .filter((f) => f.kind === 'markdown')
     .flatMap((f) => extractFromMarkdown(f.relativePath, f.content));
 
-  const links = resolveLinks(files, rawLinks);
+  const resolveSet = new Set([
+    ...entries.map(([relativePath]) => relativePath),
+    ...allFilePaths,
+  ]);
+  const links = resolveLinks(resolveSet, rawLinks);
 
   const brainNodes = files
     .filter((f) => f.kind === 'brain')
