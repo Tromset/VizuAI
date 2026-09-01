@@ -7,15 +7,16 @@ children:
   - electron/
   - public/
 files:
-  getting-started.md: "Install, run, and use brAIn Mapper"
   package.json: "npm start launches the Electron app"
-  README.md: "Hub for this folder"
+  fableconfig.json: "Fable compiler config"
+  README.md: "Hub for machine-addressed files in this folder"
 when_to_read:
-  "How do I run the app?": getting-started.md
+  "How do I run the app?": ../getting-started.md
   "Where is the F# source?": src-fsharp/
   "Where is the Electron shell?": electron/
   "Where is the UI?": public/
 links:
+  "User getting started": ../getting-started.md
   "Fable sources": src-fsharp/MapApp.fsproj
   "Main process": electron/main.js
   "UI entry": public/index.html

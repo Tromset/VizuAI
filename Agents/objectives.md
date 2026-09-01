@@ -8,7 +8,7 @@ Goals and success criteria for VizuAI. Update this file as priorities shift.
 
 1. **Fast insight** — users upload or paste data and get a useful chart in under 30 seconds.
 2. **AI-assisted design** — the system suggests chart types, colors, and labels based on data shape and user intent.
-3. **Agent-friendly codebase** — brAIn navigation so coding agents find the right file without full-repo scans.
+3. **Agent-friendly codebase** — brAIn navigation so coding agents find the right file without full-repo scans. User docs stay at the root, agent files in `Agents/`, machine code in `Code/` (`brain.yaml` excepted). See [Skill.md](Skill.md).
 
 ## Success criteria
 
@@ -20,9 +20,9 @@ Goals and success criteria for VizuAI. Update this file as priorities shift.
 
 ## Current priorities
 
-1. Define data model and chart types.
-2. Scaffold the application in [Code/](../Code/README.md).
-3. Integrate an LLM for chart-type and styling suggestions.
+1. Keep the audience split (root / `Agents/` / `Code/`) as the repo grows — [Skill.md](Skill.md).
+2. Define data model and chart types for the visualization product.
+3. Extend [Code/](../Code/README.md) beyond brAIn Mapper toward chart generation.
 
 ## Non-goals (v1)
 
