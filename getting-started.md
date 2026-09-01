@@ -9,14 +9,12 @@ This file talks to **you**. Agent context lives in [Agents/](Agents/README.md). 
 ## Prerequisites
 
 - Node.js 18+
-- .NET SDK 10+ (to compile Fable 5.1)
 
 ## Installation
 
 ```bash
 cd Code
 npm install
-dotnet tool install --global fable --version 5.1.0
 ```
 
 ## Launch
@@ -25,35 +23,32 @@ dotnet tool install --global fable --version 5.1.0
 npm start
 ```
 
-This compiles Fable 5.1, bundles the mapper, then opens the Electron app.
-
 ## Usage
 
 1. Click **Mapper un dossier** and select the root of your brAIn.
-2. The app scans `.md` and `brain.yaml` files and extracts hyperlinks (`[text](file.md)`, hub links `🧠`, wikilinks `[[page]]`).
-3. The Cytoscape graph shows connections between files.
-4. The sidebar shows the brAIn tree, stats, and orphan files.
+2. The app scans `.md` and `brain.yaml` files and extracts hyperlinks (`[text](file.md)`, wikilinks `[[page]]`).
+3. The graph shows the connections: violet diamonds for `brain.yaml` files, blue circles for hubs (`README.md`), dashed edges for parent → child structure.
+4. The sidebar shows the brAIn tree, stats, broken links, and orphan files.
 5. **Appliquer les liens** updates the `links:` sections of detected `brain.yaml` files.
 
 ## Architecture
 
 | Layer | Technology | Role |
 |---|---|---|
-| Domain logic | **Fable 5.1** (F#) | Link extraction, brain.yaml parsing, graph |
-| Design tokens | **Gemini 3.1 Pro / 3.7 Flash** (via `GeminiDesign.fs`) | Layout + Material CSS variables |
+| Domain logic | **JavaScript** ([Code/src/mapper.js](Code/src/mapper.js)) | Link extraction, brain.yaml parsing, graph |
 | Desktop shell | **Electron** | File scan, IPC, window |
 | Visualization | **Cytoscape.js** | Interactive hyperlink graph |
 
-Fable orchestrates Gemini for design: `GeminiDesign.fs` simulates the Pro (layout) → Flash (tokens) pipeline.
+No AI model is embedded in the app: it is a local, offline tool with no API key.
 
 ## Where the code lives
 
 ```
 Code/                 # machine-addressed source (this repo)
-├── src-fsharp/       # F# sources (Fable 5.1)
-├── dist/mapper.cjs   # CommonJS bundle for Electron (generated)
-├── electron/         # Electron main process
+├── src/mapper.js     # Core: links, brain.yaml parsing, graph
+├── electron/         # Electron main process + preload
 ├── public/           # Renderer UI (HTML/CSS/JS)
+├── test/             # Mapper unit tests (npm test)
 └── package.json
 ```
 
@@ -63,7 +58,6 @@ Each of those folders may also contain a `brain.yaml` navigation card. That file
 
 ```bash
 cd Code
-npm run build:fable   # Compile F# → JS
-npm run build:bundle  # Bundle esbuild → dist/mapper.cjs
-npm run dev           # Build + Electron with logs
+npm test              # Mapper unit tests (pure Node)
+npm run dev           # Electron with logs
 ```

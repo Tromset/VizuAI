@@ -3,20 +3,21 @@ name: Code
 purpose: "brAIn Mapper — Electron app for folder mapping and auto-linking"
 parent: ../brain.yaml
 children:
-  - src-fsharp/
+  - src/
   - electron/
   - public/
+  - test/
 files:
   package.json: "npm start launches the Electron app"
-  fableconfig.json: "Fable compiler config"
   README.md: "Hub for machine-addressed files in this folder"
 when_to_read:
   "How do I run the app?": ../getting-started.md
-  "Where is the F# source?": src-fsharp/
+  "Where is the mapping logic?": src/mapper.js
   "Where is the Electron shell?": electron/
   "Where is the UI?": public/
+  "How do I run the tests?": test/mapper.test.js
 links:
   "User getting started": ../getting-started.md
-  "Fable sources": src-fsharp/MapApp.fsproj
+  "Mapping logic": src/mapper.js
   "Main process": electron/main.js
   "UI entry": public/index.html

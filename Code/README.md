@@ -12,13 +12,12 @@ Files in this folder **talk to the machine**: source, manifests, and runtime con
 |---|---|
 | [brain.yaml](brain.yaml) | Routing table for this folder |
 | [package.json](package.json) | Electron app — `npm start` |
-| [fableconfig.json](fableconfig.json) | Fable compiler config |
 
 ## Subfolders
 
 | Path | Purpose |
 |---|---|
-| `src-fsharp/` | Fable 5.1 — link extraction, brain.yaml parsing, graph builder |
+| `src/` | Core logic — link extraction, brain.yaml parsing, graph builder |
 | `electron/` | Electron main process and preload |
-| `public/` | Renderer UI (Gemini-inspired design) |
-| `dist/` | Compiled mapper bundle (generated) |
+| `public/` | Renderer UI (HTML/CSS/JS) |
+| `test/` | Mapper unit tests — `npm test` |

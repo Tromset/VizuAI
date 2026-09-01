@@ -1,7 +1,1 @@
-dist/
 node_modules/
-src-fsharp/fable_modules/
-src-fsharp/obj/
-src-fsharp/bin/
-src-fsharp/**/*.fs.js
-src-fsharp/**/*.fs.js.map

@@ -5,19 +5,88 @@
 
   const $ = (sel) => document.querySelector(sel);
 
-  async function initTheme() {
-    try {
-      const design = await window.brainMapper.getDesignTheme();
-      if (design && design.cssVariables) {
-        const root = document.documentElement;
-        Object.entries(design.cssVariables).forEach(([key, val]) => {
-          root.style.setProperty(key, val);
-        });
-      }
-    } catch (e) {
-      console.warn('Theme load skipped:', e);
-    }
-  }
+  const GRAPH_STYLE = [
+    {
+      selector: 'node',
+      style: {
+        label: 'data(label)',
+        'text-valign': 'bottom',
+        'text-halign': 'center',
+        'font-size': '10px',
+        'font-family': 'Inter, Segoe UI, sans-serif',
+        'text-margin-y': 7,
+        color: '#97a1b7',
+        width: 26,
+        height: 26,
+        'background-color': '#232e45',
+        'border-width': 2,
+        'border-color': '#5f6b84',
+      },
+    },
+    {
+      selector: 'node[kind = "brain"]',
+      style: {
+        'background-color': '#2a2350',
+        'border-color': '#8b7cff',
+        color: '#b5aaff',
+        shape: 'diamond',
+        width: 36,
+        height: 36,
+      },
+    },
+    {
+      selector: 'node[?hub][kind != "brain"]',
+      style: {
+        'background-color': '#16294a',
+        'border-color': '#55a9ff',
+        color: '#8fc4ff',
+        width: 32,
+        height: 32,
+      },
+    },
+    {
+      selector: 'edge',
+      style: {
+        width: 1.5,
+        'line-color': '#33415c',
+        'target-arrow-color': '#33415c',
+        'target-arrow-shape': 'triangle',
+        'arrow-scale': 0.8,
+        'curve-style': 'bezier',
+        label: 'data(label)',
+        'font-size': '8px',
+        'font-family': 'Inter, Segoe UI, sans-serif',
+        color: '#5f6b84',
+        'text-rotation': 'autorotate',
+        'text-background-color': '#0e1420',
+        'text-background-opacity': 0.85,
+        'text-background-padding': '2px',
+      },
+    },
+    {
+      selector: 'edge[?auto]',
+      style: {
+        'line-color': '#3e6ea8',
+        'target-arrow-color': '#3e6ea8',
+      },
+    },
+    {
+      selector: 'edge[!auto]',
+      style: {
+        'line-style': 'dashed',
+        'line-color': '#57499e',
+        'target-arrow-color': '#57499e',
+      },
+    },
+    {
+      selector: 'node.highlighted, node:selected',
+      style: {
+        'border-width': 3,
+        'border-color': '#ffc24b',
+        color: '#e8ecf4',
+      },
+    },
+  ];
 
   function setLoading(loading) {
     document.body.classList.toggle('loading', loading);
@@ -34,57 +103,73 @@
       : '';
   }
 
+  function treeItem({ className, path, icon, text, title }) {
+    const el = document.createElement('div');
+    el.className = className;
+    if (title) el.title = title;
+
+    if (icon) {
+      const iconEl = document.createElement('span');
+      iconEl.textContent = icon;
+      el.appendChild(iconEl);
+    }
+    el.appendChild(document.createTextNode(text));
+
+    if (path) {
+      el.dataset.path = path;
+      el.addEventListener('click', () => highlightNode(path));
+    }
+    return el;
+  }
+
   function buildTree(data) {
     const tree = $('#tree');
     tree.innerHTML = '';
 
     const orphanSet = new Set(data.orphans || []);
+    const hubs = data.brainNodes || [];
 
-    const hubs = (data.brainNodes || []).map((b) => ({
-      name: b.name,
-      path: b.yamlPath,
-      children: b.children,
-      purpose: b.purpose,
-    }));
-
-    if (hubs.length === 0 && (data.files || []).length > 0) {
+    if (hubs.length === 0) {
       (data.files || []).forEach((f) => {
-        const item = document.createElement('div');
-        item.className = 'tree-item' + (orphanSet.has(f.path) ? ' tree-item--orphan' : '');
-        item.dataset.path = f.path;
-        item.textContent = f.path;
-        item.addEventListener('click', () => highlightNode(f.path));
-        tree.appendChild(item);
+        tree.appendChild(
+          treeItem({
+            className: 'tree-item' + (orphanSet.has(f.path) ? ' tree-item--orphan' : ''),
+            path: f.path,
+            text: f.path,
+          })
+        );
       });
       return;
     }
 
     hubs.forEach((hub) => {
-      const hubEl = document.createElement('div');
-      hubEl.className = 'tree-item tree-item--brain tree-item--hub';
-      hubEl.dataset.path = hub.path;
-      hubEl.innerHTML = `<span>🧠</span> ${hub.name}`;
-      if (hub.purpose) hubEl.title = hub.purpose;
-      hubEl.addEventListener('click', () => highlightNode(hub.path));
-      tree.appendChild(hubEl);
+      tree.appendChild(
+        treeItem({
+          className: 'tree-item tree-item--brain',
+          path: hub.yamlPath,
+          icon: '🧠',
+          text: hub.name,
+          title: hub.purpose || undefined,
+        })
+      );
 
       (hub.children || []).forEach((child) => {
-        const childEl = document.createElement('div');
-        childEl.className = 'tree-item';
-        childEl.style.paddingLeft = '24px';
-        childEl.innerHTML = `<span>📁</span> ${child}`;
-        tree.appendChild(childEl);
+        const el = treeItem({ className: 'tree-item', icon: '📁', text: child });
+        el.style.paddingLeft = '26px';
+        tree.appendChild(el);
       });
     });
 
     (data.orphans || []).forEach((path) => {
-      const el = document.createElement('div');
-      el.className = 'tree-item tree-item--orphan';
-      el.dataset.path = path;
-      el.innerHTML = `<span>⚠️</span> ${path}`;
-      el.title = 'Fichier orphelin — aucun lien entrant';
-      el.addEventListener('click', () => highlightNode(path));
-      tree.appendChild(el);
+      tree.appendChild(
+        treeItem({
+          className: 'tree-item tree-item--orphan',
+          path,
+          icon: '⚠️',
+          text: path,
+          title: 'Fichier orphelin — ne participe à aucun lien',
+        })
+      );
     });
   }
 
@@ -95,17 +180,13 @@
 
     const issues = [
       ...(data.brokenLinks || []).map(
-        (l) => `Lien cassé: ${l.source}:${l.line} → ${l.target}`
+        (l) => `Lien cassé : ${l.source}:${l.line} → ${l.target}`
       ),
-      ...(data.orphans || []).map((o) => `Orphelin: ${o}`),
+      ...(data.orphans || []).map((o) => `Orphelin : ${o}`),
     ];
 
-    if (issues.length === 0) {
-      panel.hidden = true;
-      return;
-    }
+    panel.hidden = issues.length === 0;
 
-    panel.hidden = false;
     issues.forEach((text) => {
       const li = document.createElement('li');
       li.textContent = text;
@@ -116,115 +197,32 @@
   function renderGraph(data) {
     $('#graph-placeholder').hidden = true;
 
-    const elements = [];
-
-    (data.nodes || []).forEach((n) => {
-      elements.push({
-        data: {
-          id: n.id,
-          label: n.label,
-          kind: n.kind,
-          hub: n.hub,
-        },
-      });
-    });
-
-    (data.edges || []).forEach((e, i) => {
-      elements.push({
-        data: {
-          id: `e${i}`,
-          source: e.source,
-          target: e.target,
-          label: e.label,
-          auto: e.auto,
-        },
-      });
-    });
+    const elements = [
+      ...(data.nodes || []).map((n) => ({
+        data: { id: n.id, label: n.label, kind: n.kind, hub: n.hub },
+      })),
+      ...(data.edges || []).map((e, i) => ({
+        data: { id: `e${i}`, source: e.source, target: e.target, label: e.label, auto: e.auto },
+      })),
+    ];
 
     if (cy) cy.destroy();
 
     cy = cytoscape({
       container: document.getElementById('cy'),
       elements,
-      style: [
-        {
-          selector: 'node',
-          style: {
-            label: 'data(label)',
-            'text-valign': 'bottom',
-            'text-halign': 'center',
-            'font-size': '10px',
-            'font-family': 'Google Sans Flex, Segoe UI, sans-serif',
-            'text-margin-y': 6,
-            width: 28,
-            height: 28,
-            'background-color': '#E8EAED',
-            'border-width': 2,
-            'border-color': '#DADCE0',
-          },
-        },
-        {
-          selector: 'node[kind = "brain"]',
-          style: {
-            'background-color': '#F3E8FD',
-            'border-color': '#9334E6',
-            shape: 'diamond',
-            width: 36,
-            height: 36,
-          },
-        },
-        {
-          selector: 'node[hub]',
-          style: {
-            'background-color': '#E8F0FE',
-            'border-color': '#1A73E8',
-            width: 32,
-            height: 32,
-          },
-        },
-        {
-          selector: 'edge',
-          style: {
-            width: 1.5,
-            'line-color': '#DADCE0',
-            'target-arrow-color': '#DADCE0',
-            'target-arrow-shape': 'triangle',
-            'curve-style': 'bezier',
-            label: 'data(label)',
-            'font-size': '8px',
-            color: '#9AA0A6',
-            'text-rotation': 'autorotate',
-          },
-        },
-        {
-          selector: 'edge[auto]',
-          style: {
-            'line-color': '#1A73E8',
-            'target-arrow-color': '#1A73E8',
-          },
-        },
-        {
-          selector: 'node:selected',
-          style: {
-            'border-width': 3,
-            'border-color': '#1A73E8',
-          },
-        },
-      ],
+      style: GRAPH_STYLE,
       layout: {
         name: 'cose',
         animate: true,
         animationDuration: 500,
         nodeRepulsion: 8000,
         idealEdgeLength: 100,
-        padding: 40,
+        padding: 60,
       },
     });
 
-    cy.on('tap', 'node', (evt) => {
-      const node = evt.target;
-      highlightNode(node.id());
-    });
+    cy.on('tap', 'node', (evt) => highlightNode(evt.target.id()));
   }
 
   function highlightNode(nodeId) {
@@ -252,7 +250,7 @@
       renderGraph(data);
       $('#btn-apply').disabled = !(data.updateCount > 0);
     } catch (err) {
-      alert(`Erreur de cartographie: ${err.message}`);
+      alert(`Erreur de cartographie : ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -271,21 +269,19 @@
     if (!confirmed) return;
 
     try {
-      await window.brainMapper.applyUpdates(
-        currentMap.rootPath,
-        currentMap.updates
-      );
-      alert('Liens mis à jour avec succès !');
+      await window.brainMapper.applyUpdates(currentMap.rootPath, currentMap.updates);
       await mapFolder(currentMap.rootPath);
     } catch (err) {
-      alert(`Erreur: ${err.message}`);
+      alert(`Erreur : ${err.message}`);
     }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    initTheme();
     $('#btn-select').addEventListener('click', selectAndMap);
     $('#btn-apply').addEventListener('click', applyUpdates);
+    $('#btn-zoom-in').addEventListener('click', () => cy && cy.zoom(cy.zoom() * 1.25));
+    $('#btn-zoom-out').addEventListener('click', () => cy && cy.zoom(cy.zoom() / 1.25));
+    $('#btn-fit').addEventListener('click', () => cy && cy.fit(undefined, 60));
 
     const params = new URLSearchParams(window.location.search);
     const autoPath = params.get('path');

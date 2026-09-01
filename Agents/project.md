@@ -21,7 +21,7 @@ Sort files by who they talk to. Full directives: [Skill.md](Skill.md).
 
 ## Stack
 
-brAIn Mapper: Electron + Fable 5.1 (F#) + Cytoscape.js. Visualization product stack still open. See [objectives.md](objectives.md) and [Code/](../Code/README.md).
+brAIn Mapper: Electron + plain JavaScript (Node) + Cytoscape.js. Visualization product stack still open. See [objectives.md](objectives.md) and [Code/](../Code/README.md).
 
 ## Status
 
