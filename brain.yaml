@@ -1,0 +1,15 @@
+# brain.yaml — folder variables (brAIn rule 6)
+name: VizuAI
+purpose: "AI-powered data visualization project"
+parent: null
+children:
+  - Agents/
+  - Code/
+files:
+  README.md: "Root hub — start here for navigation"
+when_to_read:
+  "Where do I start?": README.md
+  "What is this project?": Agents/project.md
+  "What are we building?": Agents/objectives.md
+  "Where is the source code?": Code/README.md
+links: {}
