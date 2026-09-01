@@ -1,14 +1,19 @@
 # brain.yaml — folder variables (brAIn rule 6)
 name: Agents
-purpose: "Project context, objectives, and decisions for agents"
+purpose: "Project context, objectives, decisions, and skills for agents"
 parent: ../brain.yaml
 children: []
 files:
   project.md: "What VizuAI is and what it is not"
   objectives.md: "Goals, success criteria, and current priorities"
+  Skill.md: "brainify skill — audience split and the 6 brAIn rules"
 when_to_read:
   "What is VizuAI?": project.md
   "What problem does it solve?": project.md
   "What are the goals?": objectives.md
   "What should I prioritize?": objectives.md
-links: {}
+  "How do I brainify a folder?": Skill.md
+  "Where do user docs vs agent files vs code go?": Skill.md
+links:
+  "User getting started": ../getting-started.md
+  "Machine source hub": ../Code/README.md
