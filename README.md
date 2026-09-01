@@ -25,3 +25,4 @@ VizuAI is an AI-assisted visualization project. Files are split by **who they ta
 
 - [Agents/](Agents/README.md) — files written for agents
 - [Code/](Code/README.md) — files written for the machine
+- [design-system/](design-system/README.md) — ui-ux-pro-max tokens for the workspace

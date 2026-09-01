@@ -1,0 +1,4 @@
+node_modules/
+Code/node_modules/
+__pycache__/
+*.pyc

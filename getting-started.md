@@ -23,13 +23,22 @@ npm install
 npm start
 ```
 
+## Browser (same UI, no Electron)
+
+```bash
+npm run web
+```
+
+Opens on [http://127.0.0.1:5173](http://127.0.0.1:5173) with this repository as the default vault (`VAULT_PATH` to override).
+
 ## Usage
 
-1. Click **Mapper un dossier** and select the root of your brAIn.
-2. The app scans `.md` and `brain.yaml` files and extracts hyperlinks (`[text](file.md)`, wikilinks `[[page]]`).
-3. The graph shows the connections: violet diamonds for `brain.yaml` files, blue circles for hubs (`README.md`), dashed edges for parent → child structure.
-4. The sidebar shows the brAIn tree, stats, broken links, and orphan files.
-5. **Appliquer les liens** updates the `links:` sections of detected `brain.yaml` files.
+1. Click **Ouvrir un coffre** and select the root of your brAIn (in the browser, enter an absolute path).
+2. The left ribbon switches **Fichiers**, **Graphe**, and **Problèmes**. The file tree is the full vault.
+3. Click a file to open it in the editor. Edit in place, **Enregistrer** or `Ctrl+S`. Markdown has **Aperçu**.
+4. `Ctrl+P` opens the file switcher. The title-bar field filters the tree by name.
+5. The graph maps Markdown hyperlinks (`[text](file.md)`, `[[page]]`) and `brain.yaml` structure.
+6. **Appliquer les liens** writes suggested `links:` sections into detected `brain.yaml` files.
 
 ## Architecture
 
@@ -46,9 +55,11 @@ No AI model is embedded in the app: it is a local, offline tool with no API key.
 ```
 Code/                 # machine-addressed source (this repo)
 ├── src/mapper.js     # Core: links, brain.yaml parsing, graph
+├── src/vault.js      # Vault tree, read/write, search
 ├── electron/         # Electron main process + preload
 ├── public/           # Renderer UI (HTML/CSS/JS)
-├── test/             # Mapper unit tests (npm test)
+├── server.js         # Browser/dev HTTP server (npm run web)
+├── test/             # Unit tests (npm test)
 └── package.json
 ```
 

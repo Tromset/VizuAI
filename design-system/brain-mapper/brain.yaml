@@ -1,0 +1,14 @@
+# brain.yaml — folder variables (brAIn rule 6)
+name: brain-mapper
+purpose: "Persisted ui-ux-pro-max design system for the mapper workspace"
+parent: ../brain.yaml
+children:
+  - pages/
+files:
+  README.md: "Hub for this product surface"
+  MASTER.md: "Global tokens"
+when_to_read:
+  "What colors and fonts?": MASTER.md
+  "How should the editor look?": pages/workspace.md
+links:
+  "Workspace override": pages/workspace.md

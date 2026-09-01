@@ -195,7 +195,7 @@ function updateYamlLinks(content, newLinks) {
 function nodeLabel(file) {
   if (file.kind === 'brain') {
     const dir = dirOf(file.relativePath);
-    return `🧠 ${dir === '' ? 'racine' : dir.split('/').pop()}`;
+    return dir === '' ? 'racine' : dir.split('/').pop();
   }
   if (file.relativePath.endsWith('README.md')) {
     const dir = dirOf(file.relativePath);

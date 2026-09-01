@@ -11,13 +11,14 @@ Files in this folder **talk to the machine**: source, manifests, and runtime con
 | File | What it contains |
 |---|---|
 | [brain.yaml](brain.yaml) | Routing table for this folder |
-| [package.json](package.json) | Electron app — `npm start` |
+| [package.json](package.json) | Electron app (`npm start`) and web server (`npm run web`) |
+| [server.js](server.js) | Local HTTP server for the same UI in a browser |
 
 ## Subfolders
 
 | Path | Purpose |
 |---|---|
-| `src/` | Core logic — link extraction, brain.yaml parsing, graph builder |
+| `src/` | Core logic — links, vault I/O, graph |
 | `electron/` | Electron main process and preload |
 | `public/` | Renderer UI (HTML/CSS/JS) |
-| `test/` | Mapper unit tests — `npm test` |
+| `test/` | Unit tests — `npm test` |

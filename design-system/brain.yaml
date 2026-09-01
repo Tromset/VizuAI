@@ -1,0 +1,14 @@
+# brain.yaml — folder variables (brAIn rule 6)
+name: Design system
+purpose: "ui-ux-pro-max tokens and workspace overrides for brAIn Mapper"
+parent: ../brain.yaml
+children:
+  - brain-mapper/
+files:
+  README.md: "Hub for persisted design tokens"
+when_to_read:
+  "Where are the visual tokens?": brain-mapper/MASTER.md
+  "What is the Obsidian workspace override?": brain-mapper/pages/workspace.md
+links:
+  "MASTER": brain-mapper/MASTER.md
+  "Workspace": brain-mapper/pages/workspace.md
