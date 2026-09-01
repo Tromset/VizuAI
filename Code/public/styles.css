@@ -356,6 +356,7 @@ body {
 }
 
 .tree-item.is-orphan { color: var(--color-warning); }
+.tree-item.is-active.is-orphan { color: var(--color-foreground); }
 .tree-item--brain { color: #cbd5e1; }
 
 .tree-item__chevron {

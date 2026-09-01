@@ -300,7 +300,10 @@
     $('#graph-container').hidden = false;
     $('#editor-pane').hidden = true;
     $('#pane-toolbar').hidden = true;
-    if (state.cy) state.cy.resize();
+    if (state.cy) {
+      state.cy.resize();
+      state.cy.fit(undefined, 60);
+    }
   }
 
   function showEditorPane() {
