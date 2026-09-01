@@ -16,10 +16,10 @@ Implementation lives here. Agents should read [Agents/project.md](../Agents/proj
 
 | Path | Purpose |
 |---|---|
-| `src-fsharp/` | Fable 5.1 — link extraction, brain.yaml parsing, graph builder |
+| `src/` | Core logic — link extraction, brain.yaml parsing, graph builder |
 | `electron/` | Electron main process and preload |
-| `public/` | Renderer UI (Gemini-inspired design) |
-| `dist/` | Compiled mapper bundle (generated) |
+| `public/` | Renderer UI (HTML/CSS/JS) |
+| `test/` | Mapper unit tests — `npm test` |
 
 ## Quick start
 

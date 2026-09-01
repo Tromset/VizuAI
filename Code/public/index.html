@@ -3,30 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self';" />
   <title>brAIn Mapper</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400;6..144,500;6..144,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div id="app">
     <header class="header">
       <div class="header__brand">
-        <span class="header__logo">🧠</span>
+        <span class="header__logo" aria-hidden="true">🧠</span>
         <div>
           <h1 class="header__title">brAIn Mapper</h1>
-          <p class="header__subtitle">Cartographie agentique · Fable 5.1 + Gemini</p>
+          <p class="header__subtitle">Cartographie des dossiers agentiques</p>
         </div>
       </div>
       <div class="header__actions">
         <button id="btn-select" class="btn btn--primary">
-          <span class="btn__icon">📂</span>
+          <span class="btn__icon" aria-hidden="true">📂</span>
           Mapper un dossier
         </button>
         <button id="btn-apply" class="btn btn--accent" disabled>
-          <span class="btn__icon">🔗</span>
+          <span class="btn__icon" aria-hidden="true">🔗</span>
           Appliquer les liens
         </button>
       </div>
@@ -44,8 +44,8 @@
           <div class="stats" id="stats">
             <div class="stat"><span class="stat__value" id="stat-files">—</span><span class="stat__label">Fichiers</span></div>
             <div class="stat"><span class="stat__value" id="stat-links">—</span><span class="stat__label">Liens</span></div>
-            <div class="stat"><span class="stat__value" id="stat-broken">—</span><span class="stat__label">Cassés</span></div>
-            <div class="stat"><span class="stat__value" id="stat-orphans">—</span><span class="stat__label">Orphelins</span></div>
+            <div class="stat stat--error"><span class="stat__value" id="stat-broken">—</span><span class="stat__label">Cassés</span></div>
+            <div class="stat stat--warning"><span class="stat__value" id="stat-orphans">—</span><span class="stat__label">Orphelins</span></div>
           </div>
         </section>
 
@@ -64,8 +64,22 @@
 
       <main class="main">
         <div id="graph-container" class="graph-container">
+          <div class="graph-toolbar">
+            <div class="legend">
+              <span class="legend__item"><i class="legend__dot legend__dot--brain"></i>brain.yaml</span>
+              <span class="legend__item"><i class="legend__dot legend__dot--hub"></i>Hub</span>
+              <span class="legend__item"><i class="legend__dot legend__dot--md"></i>Markdown</span>
+              <span class="legend__item"><i class="legend__line legend__line--auto"></i>Lien détecté</span>
+              <span class="legend__item"><i class="legend__line legend__line--structure"></i>Structure</span>
+            </div>
+            <div class="graph-controls">
+              <button id="btn-zoom-in" class="icon-btn" title="Zoomer" aria-label="Zoomer">+</button>
+              <button id="btn-zoom-out" class="icon-btn" title="Dézoomer" aria-label="Dézoomer">−</button>
+              <button id="btn-fit" class="icon-btn" title="Ajuster la vue" aria-label="Ajuster la vue">⤢</button>
+            </div>
+          </div>
           <div class="graph-placeholder" id="graph-placeholder">
-            <div class="graph-placeholder__icon">🗺️</div>
+            <div class="graph-placeholder__icon" aria-hidden="true">🗺️</div>
             <h2>Cartographie des hyperliens</h2>
             <p>Choisissez un dossier brAIn pour analyser automatiquement les liens entre fichiers Markdown et brain.yaml.</p>
           </div>
@@ -75,11 +89,9 @@
     </div>
 
     <footer class="footer">
-      <span>Logique Fable 5.1</span>
-      <span class="footer__sep">·</span>
-      <span>Design Gemini 3.1 Pro / 3.7 Flash</span>
-      <span class="footer__sep">·</span>
-      <span id="scan-time"></span>
+      <span class="footer__brand">brAIn Mapper</span>
+      <span class="footer__sep" aria-hidden="true">·</span>
+      <span id="scan-time">En attente d'un dossier</span>
     </footer>
   </div>
 
