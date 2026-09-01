@@ -23,17 +23,33 @@ assert.deepEqual(
 );
 assert.equal(links[0].line, 2);
 
-const files = [
-  { relativePath: 'README.md', kind: 'markdown', content: '' },
-  { relativePath: 'Code/brain.yaml', kind: 'brain', content: '' },
-  { relativePath: 'Agents/project.md', kind: 'markdown', content: '' },
-];
-
-const resolved = mapper.resolveLinks(files, links);
+const resolved = mapper.resolveLinks(
+  ['README.md', 'Code/brain.yaml', 'Agents/project.md'],
+  links
+);
 assert.deepEqual(
   resolved.map((l) => l.resolved),
   [true, true, true, false],
   'wikilink résolu via la variante .md, lien manquant marqué cassé'
+);
+
+// --- Le code (inline et blocs) n'est pas une source de liens ---
+
+const codeLinks = mapper.extractFromMarkdown(
+  'doc.md',
+  [
+    'Exemples : `[text](file.md)` et `[[page]]` ne comptent pas.',
+    '```md',
+    '[dans un bloc](ignore.md)',
+    '```',
+    'Mais [vrai lien](reel.md) oui.',
+  ].join('\n')
+);
+
+assert.deepEqual(
+  codeLinks.map((l) => l.target),
+  ['reel.md'],
+  'les exemples en code inline et en bloc sont ignorés'
 );
 
 // --- Parsing brain.yaml ---
@@ -89,18 +105,26 @@ assert.ok(
 
 // --- Cartographie de bout en bout ---
 
-const result = mapper.mapFolder('/tmp/demo', [
-  ['README.md', '# Racine\n[Code](Code/README.md)\n'],
-  ['brain.yaml', 'name: Racine\nchildren:\n  - Code/\n'],
-  ['Code/README.md', '# Code\n[retour](../README.md)\n[cassé](nope.md)\n'],
-  ['Code/brain.yaml', 'name: Code\nlinks: {}\n'],
-  ['Code/notes.md', 'Aucun lien entrant ni sortant.\n'],
-  ['image.png', 'binaire ignoré'],
-]);
+const result = mapper.mapFolder(
+  '/tmp/demo',
+  [
+    ['README.md', '# Racine\n[Code](Code/README.md)\n'],
+    ['brain.yaml', 'name: Racine\nchildren:\n  - Code/\n'],
+    ['Code/README.md', '# Code\n[retour](../README.md)\n[cassé](nope.md)\n[manifest](package.json)\n'],
+    ['Code/brain.yaml', 'name: Code\nlinks: {}\n'],
+    ['Code/notes.md', 'Aucun lien entrant ni sortant.\n'],
+    ['image.png', 'binaire ignoré'],
+  ],
+  ['Code/package.json']
+);
 
 assert.equal(result.fileCount, 5, 'le fichier non pertinent est ignoré');
-assert.equal(result.resolvedCount, 2);
+assert.equal(result.resolvedCount, 3, 'le lien vers package.json (fichier réel) est résolu');
 assert.equal(result.brokenCount, 1);
+assert.ok(
+  !result.edges.some((e) => e.target === 'Code/package.json'),
+  'pas d\'arête vers un fichier sans nœud dans le graphe'
+);
 assert.deepEqual(result.orphans, ['Code/notes.md']);
 assert.equal(result.updateCount > 0, true, 'des liens sont suggérés pour les brain.yaml');
 

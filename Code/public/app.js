@@ -216,12 +216,15 @@
         name: 'cose',
         animate: true,
         animationDuration: 500,
-        nodeRepulsion: 8000,
-        idealEdgeLength: 100,
-        padding: 60,
+        nodeDimensionsIncludeLabels: true,
+        nodeRepulsion: 400000,
+        nodeOverlap: 24,
+        idealEdgeLength: 130,
+        padding: 40,
       },
     });
 
+    cy.one('layoutstop', () => cy.fit(undefined, 50));
     cy.on('tap', 'node', (evt) => highlightNode(evt.target.id()));
   }
 
