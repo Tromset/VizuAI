@@ -8,16 +8,16 @@ children:
   - public/
   - test/
 files:
-  getting-started.md: "Install, run, and use brAIn Mapper"
   package.json: "npm start launches the Electron app"
-  README.md: "Hub for this folder"
+  README.md: "Hub for machine-addressed files in this folder"
 when_to_read:
-  "How do I run the app?": getting-started.md
+  "How do I run the app?": ../getting-started.md
   "Where is the mapping logic?": src/mapper.js
   "Where is the Electron shell?": electron/
   "Where is the UI?": public/
   "How do I run the tests?": test/mapper.test.js
 links:
+  "User getting started": ../getting-started.md
   "Mapping logic": src/mapper.js
   "Main process": electron/main.js
   "UI entry": public/index.html
