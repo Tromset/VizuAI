@@ -1,0 +1,24 @@
+{
+  "name": "brain-mapper",
+  "version": "1.0.0",
+  "description": "Electron app to map brAIn folders and auto-link files via hyperlink detection",
+  "main": "electron/main.js",
+  "scripts": {
+    "build:fable": "fable src-fsharp",
+    "build:bundle": "esbuild src-fsharp/Program.fs.js --bundle --platform=node --format=cjs --outfile=dist/mapper.cjs",
+    "build": "npm run build:fable && npm run build:bundle",
+    "start": "npm run build && electron .",
+    "dev": "npm run build && electron . --enable-logging"
+  },
+  "keywords": ["brain", "electron", "fable", "agentic"],
+  "author": "Tromset",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "esbuild": "^0.24.0"
+  },
+  "dependencies": {
+    "cytoscape": "^3.30.4",
+    "js-yaml": "^4.1.0"
+  }
+}

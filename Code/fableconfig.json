@@ -1,0 +1,7 @@
+{
+  "project": "src-fsharp/MapApp.fsproj",
+  "outDir": "src",
+  "sourceMaps": true,
+  "exclude": ["**/*.fs.js", "bin", "obj"],
+  "module": "commonjs"
+}

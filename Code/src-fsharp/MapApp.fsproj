@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Types.fs" />
+    <Compile Include="LinkExtractor.fs" />
+    <Compile Include="BrainYaml.fs" />
+    <Compile Include="Scanner.fs" />
+    <Compile Include="GraphBuilder.fs" />
+    <Compile Include="GeminiDesign.fs" />
+    <Compile Include="Mapper.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fable.Core" Version="4.5.0" />
+    <PackageReference Include="Fable.Promise" Version="2.2.0" />
+    <PackageReference Include="Thoth.Json" Version="10.4.0" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';" />
+  <title>brAIn Mapper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400;6..144,500;6..144,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="header__brand">
+        <span class="header__logo">🧠</span>
+        <div>
+          <h1 class="header__title">brAIn Mapper</h1>
+          <p class="header__subtitle">Cartographie agentique · Fable 5.1 + Gemini</p>
+        </div>
+      </div>
+      <div class="header__actions">
+        <button id="btn-select" class="btn btn--primary">
+          <span class="btn__icon">📂</span>
+          Mapper un dossier
+        </button>
+        <button id="btn-apply" class="btn btn--accent" disabled>
+          <span class="btn__icon">🔗</span>
+          Appliquer les liens
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <section class="panel">
+          <h2 class="panel__title">Dossier</h2>
+          <p id="folder-path" class="folder-path">Aucun dossier sélectionné</p>
+        </section>
+
+        <section class="panel">
+          <h2 class="panel__title">Statistiques</h2>
+          <div class="stats" id="stats">
+            <div class="stat"><span class="stat__value" id="stat-files">—</span><span class="stat__label">Fichiers</span></div>
+            <div class="stat"><span class="stat__value" id="stat-links">—</span><span class="stat__label">Liens</span></div>
+            <div class="stat"><span class="stat__value" id="stat-broken">—</span><span class="stat__label">Cassés</span></div>
+            <div class="stat"><span class="stat__value" id="stat-orphans">—</span><span class="stat__label">Orphelins</span></div>
+          </div>
+        </section>
+
+        <section class="panel panel--grow">
+          <h2 class="panel__title">Arborescence brAIn</h2>
+          <div id="tree" class="tree">
+            <p class="tree__empty">Sélectionnez un dossier pour commencer</p>
+          </div>
+        </section>
+
+        <section class="panel" id="issues-panel" hidden>
+          <h2 class="panel__title">Problèmes détectés</h2>
+          <ul id="issues-list" class="issues-list"></ul>
+        </section>
+      </aside>
+
+      <main class="main">
+        <div id="graph-container" class="graph-container">
+          <div class="graph-placeholder" id="graph-placeholder">
+            <div class="graph-placeholder__icon">🗺️</div>
+            <h2>Cartographie des hyperliens</h2>
+            <p>Choisissez un dossier brAIn pour analyser automatiquement les liens entre fichiers Markdown et brain.yaml.</p>
+          </div>
+          <div id="cy" class="cy"></div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <span>Logique Fable 5.1</span>
+      <span class="footer__sep">·</span>
+      <span>Design Gemini 3.1 Pro / 3.7 Flash</span>
+      <span class="footer__sep">·</span>
+      <span id="scan-time"></span>
+    </footer>
+  </div>
+
+  <script src="../node_modules/cytoscape/dist/cytoscape.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
