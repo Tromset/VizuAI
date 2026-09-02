@@ -192,16 +192,23 @@ function updateYamlLinks(content, newLinks) {
 
 // --- Graphe -------------------------------------------------------------------
 
+/** Nom du dossier qui contient le fichier (racine du scan → « racine »). */
+function folderNameOf(relPath) {
+  const dir = dirOf(relPath);
+  return dir === '' ? 'racine' : dir.split('/').pop();
+}
+
+function isFolderNode(file) {
+  return file.kind === 'brain' || file.relativePath.endsWith('README.md');
+}
+
+/**
+ * Libellé du nœud : uniquement le nom du dossier pour les hubs
+ * (brain.yaml / README.md). Les fichiers individuels restent des
+ * boules sans nom, pour ne pas saturer le graphe.
+ */
 function nodeLabel(file) {
-  if (file.kind === 'brain') {
-    const dir = dirOf(file.relativePath);
-    return `🧠 ${dir === '' ? 'racine' : dir.split('/').pop()}`;
-  }
-  if (file.relativePath.endsWith('README.md')) {
-    const dir = dirOf(file.relativePath);
-    return dir === '' ? 'racine' : dir.split('/').pop();
-  }
-  return file.relativePath.split('/').pop();
+  return isFolderNode(file) ? folderNameOf(file.relativePath) : '';
 }
 
 function buildGraph(files, links, brainNodes) {
@@ -211,7 +218,8 @@ function buildGraph(files, links, brainNodes) {
     id: f.relativePath,
     label: nodeLabel(f),
     kind: f.kind,
-    hub: f.kind === 'brain' || f.relativePath.endsWith('README.md'),
+    hub: isFolderNode(f),
+    folder: isFolderNode(f),
   }));
 
   const seen = new Set();
@@ -337,6 +345,9 @@ module.exports = {
   suggestLinks,
   formatLinksSection,
   updateYamlLinks,
+  folderNameOf,
+  isFolderNode,
+  nodeLabel,
   buildGraph,
   findOrphans,
   mapFolder,

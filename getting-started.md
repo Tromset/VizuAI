@@ -27,7 +27,7 @@ npm start
 
 1. Click **Mapper un dossier** and select the root of your brAIn.
 2. The app scans `.md` and `brain.yaml` files and extracts hyperlinks (`[text](file.md)`, wikilinks `[[page]]`).
-3. The graph shows the connections: violet diamonds for `brain.yaml` files, blue circles for hubs (`README.md`), dashed edges for parent → child structure.
+3. The graph shows the connections as balls that repel each other: violet for `brain.yaml`, blue for hubs (`README.md`). Only folder names are labeled. Dashed edges mark parent → child structure.
 4. The sidebar shows the brAIn tree, stats, broken links, and orphan files.
 5. **Appliquer les liens** updates the `links:` sections of detected `brain.yaml` files.
 

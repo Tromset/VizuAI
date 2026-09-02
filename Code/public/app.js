@@ -5,6 +5,9 @@
 
   const $ = (sel) => document.querySelector(sel);
 
+  const FONT_ROUNDED = '"Arial Rounded MT Bold", "Arial Rounded MT", Nunito, sans-serif';
+  const BALL_GAP = 36;
+
   const GRAPH_STYLE = [
     {
       selector: 'node',
@@ -12,12 +15,15 @@
         label: 'data(label)',
         'text-valign': 'bottom',
         'text-halign': 'center',
-        'font-size': '10px',
-        'font-family': 'Inter, Segoe UI, sans-serif',
-        'text-margin-y': 7,
+        'font-size': '13px',
+        'font-weight': 700,
+        'font-family': FONT_ROUNDED,
+        'text-margin-y': 10,
+        'text-max-width': 90,
+        'text-wrap': 'ellipsis',
         color: '#97a1b7',
-        width: 26,
-        height: 26,
+        width: 28,
+        height: 28,
         'background-color': '#232e45',
         'border-width': 2,
         'border-color': '#5f6b84',
@@ -28,10 +34,10 @@
       style: {
         'background-color': '#2a2350',
         'border-color': '#8b7cff',
-        color: '#b5aaff',
-        shape: 'diamond',
-        width: 36,
-        height: 36,
+        color: '#c8bfff',
+        shape: 'ellipse',
+        width: 44,
+        height: 44,
       },
     },
     {
@@ -40,8 +46,8 @@
         'background-color': '#16294a',
         'border-color': '#55a9ff',
         color: '#8fc4ff',
-        width: 32,
-        height: 32,
+        width: 40,
+        height: 40,
       },
     },
     {
@@ -53,9 +59,9 @@
         'target-arrow-shape': 'triangle',
         'arrow-scale': 0.8,
         'curve-style': 'bezier',
-        label: 'data(label)',
+        label: '',
         'font-size': '8px',
-        'font-family': 'Inter, Segoe UI, sans-serif',
+        'font-family': FONT_ROUNDED,
         color: '#5f6b84',
         'text-rotation': 'autorotate',
         'text-background-color': '#0e1420',
@@ -122,20 +128,36 @@
     return el;
   }
 
+  function folderLabel(relPath) {
+    if (!relPath) return 'racine';
+    const clean = String(relPath).replace(/\/+$/, '');
+    if (!clean || !clean.includes('/')) {
+      return clean && !clean.includes('.') ? clean : 'racine';
+    }
+    const dir = clean.slice(0, clean.lastIndexOf('/'));
+    return dir === '' ? 'racine' : dir.split('/').pop();
+  }
+
   function buildTree(data) {
     const tree = $('#tree');
     tree.innerHTML = '';
 
-    const orphanSet = new Set(data.orphans || []);
     const hubs = data.brainNodes || [];
 
     if (hubs.length === 0) {
+      const folders = new Map();
       (data.files || []).forEach((f) => {
+        const name = folderLabel(f.path);
+        if (!folders.has(name)) folders.set(name, f.path);
+      });
+      folders.forEach((path, name) => {
         tree.appendChild(
           treeItem({
-            className: 'tree-item' + (orphanSet.has(f.path) ? ' tree-item--orphan' : ''),
-            path: f.path,
-            text: f.path,
+            className: 'tree-item',
+            path,
+            icon: '📁',
+            text: name,
+            title: name,
           })
         );
       });
@@ -154,22 +176,16 @@
       );
 
       (hub.children || []).forEach((child) => {
-        const el = treeItem({ className: 'tree-item', icon: '📁', text: child });
+        const name = String(child).replace(/\/+$/, '');
+        const el = treeItem({
+          className: 'tree-item',
+          icon: '📁',
+          text: name,
+          title: name,
+        });
         el.style.paddingLeft = '26px';
         tree.appendChild(el);
       });
-    });
-
-    (data.orphans || []).forEach((path) => {
-      tree.appendChild(
-        treeItem({
-          className: 'tree-item tree-item--orphan',
-          path,
-          icon: '⚠️',
-          text: path,
-          title: 'Fichier orphelin — ne participe à aucun lien',
-        })
-      );
     });
   }
 
@@ -194,6 +210,64 @@
     });
   }
 
+  function ballRadius(node) {
+    return Math.max(node.outerWidth(), node.outerHeight()) / 2;
+  }
+
+  /**
+   * Répulsion de collision : chaque boule pousse les autres hors de
+   * son rayon + marge, pour que labels et nœuds ne se recouvrent pas.
+   * Si `pinnedId` est fourni (nœud en cours de drag), il reste fixe
+   * et les voisins s'écartent.
+   */
+  function separateBalls(graph, pinnedId) {
+    if (!graph) return;
+    const balls = graph.nodes().map((n) => {
+      const p = n.position();
+      return { n, x: p.x, y: p.y, r: ballRadius(n) };
+    });
+
+    for (let iter = 0; iter < 18; iter++) {
+      let moved = false;
+      for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+          const a = balls[i];
+          const b = balls[j];
+          let dx = b.x - a.x;
+          let dy = b.y - a.y;
+          let dist = Math.hypot(dx, dy);
+          const min = a.r + b.r + BALL_GAP;
+          if (dist < 0.01) {
+            dx = 1;
+            dy = 0;
+            dist = 1;
+          }
+          if (dist >= min) continue;
+
+          const push = (min - dist) / 2;
+          const nx = dx / dist;
+          const ny = dy / dist;
+          const aPinned = a.n.id() === pinnedId;
+          const bPinned = b.n.id() === pinnedId;
+
+          if (!aPinned) {
+            a.x -= nx * (bPinned ? push * 2 : push);
+            a.y -= ny * (bPinned ? push * 2 : push);
+            moved = true;
+          }
+          if (!bPinned) {
+            b.x += nx * (aPinned ? push * 2 : push);
+            b.y += ny * (aPinned ? push * 2 : push);
+            moved = true;
+          }
+        }
+      }
+      if (!moved) break;
+    }
+
+    balls.forEach((b) => b.n.position({ x: b.x, y: b.y }));
+  }
+
   function renderGraph(data) {
     $('#graph-placeholder').hidden = true;
 
@@ -208,20 +282,39 @@
 
     if (cy) cy.destroy();
 
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     cy = cytoscape({
       container: document.getElementById('cy'),
       elements,
       style: GRAPH_STYLE,
       layout: {
         name: 'cose',
-        animate: true,
-        animationDuration: 500,
-        nodeRepulsion: 8000,
-        idealEdgeLength: 100,
-        padding: 60,
+        animate: !reduceMotion,
+        animationDuration: 550,
+        randomize: true,
+        fit: false,
+        padding: 48,
+        nodeDimensionsIncludeLabels: true,
+        nodeRepulsion: () => 18000,
+        nodeOverlap: 48,
+        idealEdgeLength: () => 170,
+        edgeElasticity: () => 0.35,
+        nestingFactor: 1.2,
+        gravity: 0.18,
+        numIter: 2500,
+        initialTemp: 220,
+        coolingFactor: 0.95,
+        minTemp: 1.0,
+        componentSpacing: 80,
       },
     });
 
+    cy.one('layoutstop', () => {
+      separateBalls(cy);
+      cy.fit(undefined, 52);
+    });
+    cy.on('drag', 'node', (evt) => separateBalls(cy, evt.target.id()));
     cy.on('tap', 'node', (evt) => highlightNode(evt.target.id()));
   }
 

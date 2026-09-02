@@ -116,4 +116,22 @@ for (const edge of result.edges) {
   assert.ok(nodeIds.has(edge.source) && nodeIds.has(edge.target), 'arêtes valides uniquement');
 }
 
+const folderNodes = result.nodes.filter((n) => n.hub);
+const fileNodes = result.nodes.filter((n) => !n.hub);
+assert.ok(
+  folderNodes.every((n) => n.label && !n.label.includes('.md') && !n.label.includes('.yaml')),
+  'les hubs affichent un nom de dossier, pas un nom de fichier'
+);
+assert.deepEqual(
+  folderNodes.map((n) => n.label).sort(),
+  ['Code', 'Code', 'racine', 'racine'],
+  'README.md et brain.yaml portent le nom de leur dossier'
+);
+assert.ok(
+  fileNodes.every((n) => n.label === ''),
+  'les fichiers individuels n\'ont pas de libellé sur le graphe'
+);
+assert.equal(mapper.nodeLabel({ kind: 'markdown', relativePath: 'Code/notes.md' }), '');
+assert.equal(mapper.folderNameOf('Code/src/mapper.js'), 'src');
+
 console.log('OK — tous les tests du mapper passent.');

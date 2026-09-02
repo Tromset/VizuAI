@@ -24,7 +24,7 @@
   --red: #ff7a7a;
   --amber: #ffc24b;
 
-  --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font: 'Arial Rounded MT Bold', 'Arial Rounded MT', 'Nunito', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
 
   --radius: 12px;
@@ -39,6 +39,7 @@
 
 body {
   font-family: var(--font);
+  font-weight: 700;
   background: var(--bg);
   color: var(--text);
   height: 100vh;
