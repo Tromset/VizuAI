@@ -203,20 +203,33 @@ function isFolderNode(file) {
 }
 
 /**
- * Libellé du nœud : uniquement le nom du dossier pour les hubs
- * (brain.yaml / README.md). Les fichiers individuels restent des
- * boules sans nom, pour ne pas saturer le graphe.
+ * Un seul libellé par dossier : le README s'il existe, sinon le
+ * brain.yaml. Les fichiers individuels restent des boules sans nom.
  */
-function nodeLabel(file) {
-  return isFolderNode(file) ? folderNameOf(file.relativePath) : '';
+function nodeLabel(file, brainNameByDir, dirsWithReadme) {
+  if (!isFolderNode(file)) return '';
+  const dir = dirOf(file.relativePath);
+  const isReadme = file.relativePath.endsWith('README.md');
+  const isBrain = file.kind === 'brain';
+  if (!isReadme && !(isBrain && dirsWithReadme && !dirsWithReadme.has(dir))) {
+    return '';
+  }
+  if (brainNameByDir && brainNameByDir.has(dir)) return brainNameByDir.get(dir);
+  return folderNameOf(file.relativePath);
 }
 
 function buildGraph(files, links, brainNodes) {
   const fileSet = new Set(files.map((f) => f.relativePath));
+  const dirsWithReadme = new Set(
+    files.filter((f) => f.relativePath.endsWith('README.md')).map((f) => dirOf(f.relativePath))
+  );
+  const brainNameByDir = new Map(
+    (brainNodes || []).map((node) => [dirOf(node.yamlPath), node.name])
+  );
 
   const nodes = files.map((f) => ({
     id: f.relativePath,
-    label: nodeLabel(f),
+    label: nodeLabel(f, brainNameByDir, dirsWithReadme),
     kind: f.kind,
     hub: isFolderNode(f),
     folder: isFolderNode(f),

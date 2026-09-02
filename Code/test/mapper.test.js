@@ -119,13 +119,18 @@ for (const edge of result.edges) {
 const folderNodes = result.nodes.filter((n) => n.hub);
 const fileNodes = result.nodes.filter((n) => !n.hub);
 assert.ok(
-  folderNodes.every((n) => n.label && !n.label.includes('.md') && !n.label.includes('.yaml')),
-  'les hubs affichent un nom de dossier, pas un nom de fichier'
+  result.nodes.every((n) => !n.label.includes('.md') && !n.label.includes('.yaml')),
+  'aucun libellé de nœud n\'est un nom de fichier'
 );
 assert.deepEqual(
-  folderNodes.map((n) => n.label).sort(),
-  ['Code', 'Code', 'racine', 'racine'],
-  'README.md et brain.yaml portent le nom de leur dossier'
+  folderNodes.map((n) => ({ id: n.id, label: n.label })).sort((a, b) => a.id.localeCompare(b.id)),
+  [
+    { id: 'brain.yaml', label: '' },
+    { id: 'Code/brain.yaml', label: '' },
+    { id: 'Code/README.md', label: 'Code' },
+    { id: 'README.md', label: 'Racine' },
+  ],
+  'un seul nom de dossier par répertoire (celui du README, via brain.yaml.name)'
 );
 assert.ok(
   fileNodes.every((n) => n.label === ''),

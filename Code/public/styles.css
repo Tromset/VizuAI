@@ -360,7 +360,7 @@ body {
   border: 1.5px solid;
 }
 
-.legend__dot--brain { border-color: var(--violet); background: var(--violet-soft); border-radius: 2px; transform: rotate(45deg); }
+.legend__dot--brain { border-color: var(--violet); background: var(--violet-soft); }
 .legend__dot--hub { border-color: var(--blue); background: var(--blue-soft); }
 .legend__dot--md { border-color: var(--text-faint); background: var(--surface-3); }
 

@@ -6,7 +6,7 @@
   const $ = (sel) => document.querySelector(sel);
 
   const FONT_ROUNDED = '"Arial Rounded MT Bold", "Arial Rounded MT", Nunito, sans-serif';
-  const BALL_GAP = 36;
+  const BALL_GAP = 48;
 
   const GRAPH_STYLE = [
     {
