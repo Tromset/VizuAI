@@ -1,0 +1,5 @@
+{
+  "name": "VizuAI — brAIn Mapper",
+  "user": "ubuntu",
+  "install": "cd Code && npm ci && node node_modules/electron/install.js"
+}
